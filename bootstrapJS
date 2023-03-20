@@ -1,0 +1,192 @@
+var datein;style="height: 100%"
+var dateout;
+
+// Dropdown Initialization
+$(function () {
+  var $select = $("#adultdropdown");
+  for (i = 1; i <= 5; i++) {
+    $select.append($("<option></option>").val(i).html(i));
+  }
+});
+
+// Date picker days change function
+$("#checkinpicker").on("change", function () {
+  datein = $("#checkindate").val();
+  dateout = $("#checkoutdate").val();
+  let days = moment(dateout).diff(moment(datein), "days");
+  if (isNaN(days)) {
+    return false;
+  }
+
+  $("#numdays").val(days);
+  let adults = $("#adultdropdown").val();
+  $("#numcost").val("$" + adults * 150 * days);
+});
+$("#checkoutpicker").on("change", function () {
+  dateout = $("#checkoutdate").val();
+  datein = $("#checkindate").val();
+  let days = moment(dateout).diff(moment(datein), "days");
+  if (isNaN(days)) {
+    return false;
+  }
+
+  $("#numdays").val(days);
+  let adults = $("#adultdropdown").val();
+  $("#numcost").val("$" + adults * 150 * days);
+});
+
+// Dropdown change function
+$("#adultdropdown").on("change", function () {
+  dateout = $("#checkoutdate").val();
+  datein = $("#checkindate").val();
+  let days = moment(dateout).diff(moment(datein), "days");
+  let adults = $("#adultdropdown").val();
+  if (isNaN(days)) {
+    return false;
+  }
+  $("#numdays").val(days);
+  $("#numcost").val("$" + adults * 150 * days);
+});
+
+// Submit function, checks and validates
+function submit() {
+  let uservalid;
+  let username = true;
+  let firstname = true;
+  let lastname = true;
+  let phonenumber = true;
+  let faxnumber = true;
+  let email = true;
+  let contactvalid;
+  let costvalid = false;
+  let costpositive = true;
+  let userform = document.getElementById("userform");
+  userform.classList.add("was-validated");
+  uservalid = document.getElementById("userform").checkValidity();
+  if (!uservalid) {
+    username = document.getElementById("usernameinput").value;
+    firstname = document.getElementById("firstnameinput").value;
+    lastname = document.getElementById("lastnameinput").value;
+    switch (username) {
+      case "":
+        username = false;
+        break;
+      default:
+        username = true;
+        break;
+    }
+    switch (firstname) {
+      case "":
+        firstname = false;
+        break;
+      default:
+        firstname = true;
+        break;
+    }
+    switch (lastname) {
+      case "":
+        lastname = false;
+        break;
+      default:
+        lastname = true;
+        break;
+    }
+  }
+  let contactform = document.getElementById("contactform");
+  contactform.classList.add("was-validated");
+  contactvalid = document.getElementById("contactform").checkValidity();
+  if (!contactvalid) {
+    phonenumber = document.getElementById("phoneinput").value;
+    faxnumber = document.getElementById("faxinput").value;
+    email = document.getElementById("emailinput").value;
+    switch (phonenumber) {
+      case "":
+        phonenumber = false;
+        break;
+      default:
+        phonenumber = true;
+        break;
+    }
+    switch (faxnumber) {
+      case "":
+        faxnumber = false;
+        break;
+      default:
+        faxnumber = true;
+        break;
+    }
+    switch (email) {
+      case "":
+        email = false;
+        break;
+      default:
+        email = true;
+        break;
+    }
+  }
+  numcost = document.getElementById("numcost").value;
+  if (numcost != "") {
+    costvalid = true;
+  }
+  let cost = numcost;
+  cost = cost.substring(1);
+
+  cost = parseInt(cost);
+  if (cost <= 0) {
+    costpositive = false;
+  }
+  if (uservalid && contactvalid && costvalid && costpositive) {
+    toastr.success("Form submitted");
+  } else {
+    if (!costvalid) {
+      toastr.error("No cost was calculated");
+    }
+    if (!costpositive) {
+      toastr.error("Cost is negative");
+    }
+    if (!uservalid) {
+      if (!username) {
+        toastr.error("Username was left blank");
+      }
+      if (!firstname) {
+        toastr.error("First name was left blank");
+      }
+      if (!lastname) {
+        toastr.error("Last name was left blank");
+      }
+    }
+    if (!contactvalid) {
+      if (!phonenumber) {
+        toastr.error("Phone number was left blank");
+      }
+      if (!faxnumber) {
+        toastr.error("Fax number was left blank");
+      }
+      if (!email) {
+        toastr.error("Email was left blank");
+      }
+    }
+  }
+}
+
+// Reset all necessary fields
+function reset() {
+  document.getElementById("usernameinput").value = "";
+  document.getElementById("firstnameinput").value = "";
+  document.getElementById("lastnameinput").value = "";
+  document.getElementById("messageinput").value = "";
+  document.getElementById("phoneinput").value = "";
+  document.getElementById("faxinput").value = "";
+  document.getElementById("emailinput").value = "";
+  document.getElementById("high").checked = false;
+  document.getElementById("medium").checked = false;
+  document.getElementById("low").checked = false;
+  document.getElementById("checkindate").value = "";
+  document.getElementById("checkoutdate").value = "";
+  document.getElementById("adultdropdown").value = 1;
+  document.getElementById("numdays").value = "";
+  document.getElementById("numcost").value = "";
+  document.getElementById("userform").classList.remove("was-validated");
+  document.getElementById("contactform").classList.remove("was-validated");
+  toastr.info("Info reset");
+}
