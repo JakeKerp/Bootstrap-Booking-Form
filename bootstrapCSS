@@ -1,0 +1,11 @@
+form label {
+  font-weight: bold;
+}
+
+.button-box{
+  text-align: right;
+}
+
+.btn{
+  width: 9rem;
+}
